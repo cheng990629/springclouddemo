@@ -1,0 +1,158 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uaa
+      MYSQL_USER: luban
+      MYSQL_PASSWORD: luban
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # LDAP服务
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ldap
+    environment:
+      LDAP_ORGANISATION: luban
+      LDAP_DOMAIN: luban.com
+      LDAP_ADMIN_PASSWORD: admin
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap
+    command: --copy-service
+
+  # Eureka服务注册中心
+  discovery:
+    build:
+      context: ./discovery-service
+      dockerfile: src/main/docker/Dockerfile
+    container_name: discovery
+    ports:
+      - "8761:8761"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 配置中心
+  configure:
+    build:
+      context: ./configure-service
+      dockerfile: src/main/docker/Dockerfile
+    container_name: configure
+    ports:
+      - "8888:8888"
+    depends_on:
+      discovery:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,native
+    volumes:
+      - ./configure-service/src/main/resources/config:/config:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # UAA认证服务
+  uaa:
+    build:
+      context: ./uaa-service
+      dockerfile: src/main/docker/Dockerfile
+    container_name: uaa
+    ports:
+      - "9999:9999"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ldap:
+        condition: service_started
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+      - SPRING_LDAP_URLS=ldap://ldap:389
+      - SPRING_LDAP_BASE=dc=luban,dc=com
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/uaa?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9999/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API网关
+  gateway:
+    build:
+      context: ./gateway-service
+      dockerfile: src/main/docker/Dockerfile
+    container_name: gateway
+    ports:
+      - "7573:7573"
+    depends_on:
+      discovery:
+        condition: service_healthy
+      uaa:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7573/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 产品服务
+  product:
+    build:
+      context: ./product-service
+      dockerfile: src/main/docker/Dockerfile
+    container_name: product
+    ports:
+      - "8082:8082"
+    depends_on:
+      discovery:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/product?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mysql_data:
+  ldap_data:
+  ldap_config:

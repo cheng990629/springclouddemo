@@ -1,0 +1,26 @@
+# 默认配置
+server:
+  port: 9999
+
+spring:
+  application:
+    name: uaa-service
+  datasource:
+    url: jdbc:mysql://mysql:3306/uaa?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  ldap:
+    urls: ldap://ldap:389
+    base: dc=luban,dc=com
+    username: cn=admin,dc=luban,dc=com
+    password: admin
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery:8761/eureka/
+
+jwt:
+  secret: luban-springcloud-demo-secret-key-for-jwt-token-generation-must-be-long-enough
+  expiration: 86400000

@@ -1,0 +1,85 @@
+dn: dc=luban,dc=com
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+o: Luban Organization
+dc: luban
+
+dn: cn=admin,dc=luban,dc=com
+objectclass: simpleSecurityObject
+objectclass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword: admin
+
+dn: ou=people,dc=luban,dc=com
+objectclass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=luban,dc=com
+objectclass: organizationalUnit
+ou: groups
+
+# LDAP普通用户
+dn: uid=ldap_user_1,ou=people,dc=luban,dc=com
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: shadowAccount
+uid: ldap_user_1
+cn: LDAP User 1
+sn: User
+givenName: LDAP
+mail: ldap_user_1@luban.com
+userPassword: ldap_user_1
+uidNumber: 10001
+gidNumber: 10001
+homeDirectory: /home/ldap_user_1
+
+# LDAP EDITOR用户
+dn: uid=ldap_editor_1,ou=people,dc=luban,dc=com
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: shadowAccount
+uid: ldap_editor_1
+cn: LDAP Editor 1
+sn: Editor
+givenName: LDAP
+mail: ldap_editor_1@luban.com
+userPassword: ldap_editor_1
+uidNumber: 10002
+gidNumber: 10002
+homeDirectory: /home/ldap_editor_1
+
+# LDAP PRODUCT_ADMIN用户
+dn: uid=ldap_adm_1,ou=people,dc=luban,dc=com
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: shadowAccount
+uid: ldap_adm_1
+cn: LDAP Admin 1
+sn: Admin
+givenName: LDAP
+mail: ldap_adm_1@luban.com
+userPassword: ldap_adm_1
+uidNumber: 10003
+gidNumber: 10003
+homeDirectory: /home/ldap_adm_1
+
+# 用户组
+dn: cn=USER,ou=groups,dc=luban,dc=com
+objectclass: groupOfNames
+cn: USER
+description: User Group
+member: uid=ldap_user_1,ou=people,dc=luban,dc=com
+
+dn: cn=EDITOR,ou=groups,dc=luban,dc=com
+objectclass: groupOfNames
+cn: EDITOR
+description: Editor Group
+member: uid=ldap_editor_1,ou=people,dc=luban,dc=com
+
+dn: cn=PRODUCT_ADMIN,ou=groups,dc=luban,dc=com
+objectclass: groupOfNames
+cn: PRODUCT_ADMIN
+description: Product Admin Group
+member: uid=ldap_adm_1,ou=people,dc=luban,dc=com
