@@ -1,0 +1,14 @@
+# Simple production stage - uses pre-built dist folder
+FROM nginx:alpine
+
+# Copy custom nginx config
+COPY web/nginx.conf /etc/nginx/nginx.conf
+
+# Copy built files
+COPY web/dist /usr/share/nginx/html
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

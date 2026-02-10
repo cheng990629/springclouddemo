@@ -1,0 +1,44 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: lubase-product
+  datasource:
+    url: jdbc:mysql://192.168.20.164:3306/product?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://192.168.20.164:9999
+
+eureka:
+  client:
+    enabled: false
+  instance:
+    prefer-ip-address: true
+
+# JWT配置
+jwt:
+  secret: luban-springcloud-demo-secret-key-for-jwt-token-generation-must-be-long-enough
+  expiration: 86400000
+
+logging:
+  level:
+    root: INFO
+    com.luban.product: DEBUG
+    org.springframework.security: DEBUG

@@ -1,7 +1,0 @@
-/root/IdeaProjects/demo/product-service/src/main/java/com/luban/product/service/ProductService.java
-/root/IdeaProjects/demo/product-service/src/main/java/com/luban/product/ProductApplication.java
-/root/IdeaProjects/demo/product-service/src/main/java/com/luban/product/repository/ProductRepository.java
-/root/IdeaProjects/demo/product-service/src/main/java/com/luban/product/entity/Product.java
-/root/IdeaProjects/demo/product-service/src/main/java/com/luban/product/config/SecurityConfig.java
-/root/IdeaProjects/demo/product-service/src/main/java/com/luban/product/controller/ProductController.java
-/root/IdeaProjects/demo/product-service/src/main/java/com/luban/product/dto/ProductDTO.java

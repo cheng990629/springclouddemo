@@ -12,18 +12,18 @@
     </parent>
 
     <groupId>com.luban</groupId>
-    <artifactId>springcloud-demo</artifactId>
+    <artifactId>lubase</artifactId>
     <version>1.0.0</version>
-    <name>SpringCloud Demo Project</name>
-    <description>SpringCloud微服务演示项目</description>
+    <name>Lubase - 鲁班笔试Demo</name>
+    <description>鲁班笔试演示项目 - SpringCloud微服务架构实践</description>
     <packaging>pom</packaging>
 
     <modules>
-        <module>uaa-service</module>
-        <module>gateway-service</module>
-        <module>discovery-service</module>
-        <module>configure-service</module>
-        <module>product-service</module>
+        <module>lubase-uaa</module>
+        <module>lubase-gateway</module>
+        <module>lubase-discovery</module>
+        <module>lubase-configure</module>
+        <module>lubase-product</module>
     </modules>
 
     <properties>

@@ -4,7 +4,7 @@ services:
   # MySQL数据库
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: lubase-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: uaa
@@ -14,18 +14,20 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./mysql/init:/docker-entrypoint-initdb.d
+      - ./sql/init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - lubase-network
 
   # LDAP服务
   ldap:
     image: osixia/openldap:1.5.0
-    container_name: ldap
+    container_name: lubase-ldap
     environment:
       LDAP_ORGANISATION: luban
       LDAP_DOMAIN: luban.com
@@ -37,13 +39,15 @@ services:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
     command: --copy-service
+    networks:
+      - lubase-network
 
   # Eureka服务注册中心
   discovery:
     build:
-      context: ./discovery-service
-      dockerfile: src/main/docker/Dockerfile
-    container_name: discovery
+      context: .
+      dockerfile: lubase-discovery/src/main/docker/Dockerfile
+    container_name: lubase-discovery
     ports:
       - "8761:8761"
     depends_on:
@@ -56,13 +60,15 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - lubase-network
 
   # 配置中心
   configure:
     build:
-      context: ./configure-service
-      dockerfile: src/main/docker/Dockerfile
-    container_name: configure
+      context: .
+      dockerfile: lubase-configure/src/main/docker/Dockerfile
+    container_name: lubase-configure
     ports:
       - "8888:8888"
     depends_on:
@@ -71,19 +77,21 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker,native
     volumes:
-      - ./configure-service/src/main/resources/config:/config:ro
+      - ./lubase-configure/src/main/resources/config:/config:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - lubase-network
 
   # UAA认证服务
   uaa:
     build:
-      context: ./uaa-service
-      dockerfile: src/main/docker/Dockerfile
-    container_name: uaa
+      context: .
+      dockerfile: lubase-uaa/src/main/docker/Dockerfile
+    container_name: lubase-uaa
     ports:
       - "9999:9999"
     depends_on:
@@ -93,7 +101,7 @@ services:
         condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://lubase-discovery:8761/eureka/
       - SPRING_LDAP_URLS=ldap://ldap:389
       - SPRING_LDAP_BASE=dc=luban,dc=com
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/uaa?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -104,13 +112,15 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - lubase-network
 
   # API网关
   gateway:
     build:
-      context: ./gateway-service
-      dockerfile: src/main/docker/Dockerfile
-    container_name: gateway
+      context: .
+      dockerfile: lubase-gateway/src/main/docker/Dockerfile
+    container_name: lubase-gateway
     ports:
       - "7573:7573"
     depends_on:
@@ -120,19 +130,21 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://lubase-discovery:8761/eureka/
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7573/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - lubase-network
 
   # 产品服务
   product:
     build:
-      context: ./product-service
-      dockerfile: src/main/docker/Dockerfile
-    container_name: product
+      context: .
+      dockerfile: lubase-product/src/main/docker/Dockerfile
+    container_name: lubase-product
     ports:
       - "8082:8082"
     depends_on:
@@ -142,7 +154,7 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://lubase-discovery:8761/eureka/
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/product?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
@@ -151,6 +163,26 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - lubase-network
+
+  # 前端
+  frontend:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: lubase-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - gateway
+    restart: unless-stopped
+    networks:
+      - lubase-network
+
+networks:
+  lubase-network:
+    driver: bridge
 
 volumes:
   mysql_data:

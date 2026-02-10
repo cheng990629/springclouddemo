@@ -1,0 +1,14 @@
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/config/OAuth2LoginSuccessHandler.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/service/AuthService.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/config/DataInitializer.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/dto/LoginRequest.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/config/LdapConfig.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/controller/OAuth2Controller.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/config/SecurityConfig.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/utils/JwtUtils.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/controller/AuthController.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/dto/AuthResponse.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/UaaApplication.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/repository/UserRepository.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/service/CustomUserDetailsService.java
+/root/IdeaProjects/demo/lubase-uaa/src/main/java/com/luban/uaa/entity/User.java

@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # MySQL数据库 - 开发环境
+  mysql:
+    image: mysql:8.0
+    container_name: lubase-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uaa
+      MYSQL_USER: luban
+      MYSQL_PASSWORD: luban
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data_dev:/var/lib/mysql
+      - ./sql/init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lubase-network
+
+  # LDAP服务 - 开发环境
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: lubase-ldap-dev
+    environment:
+      LDAP_ORGANISATION: luban
+      LDAP_DOMAIN: luban.com
+      LDAP_ADMIN_PASSWORD: admin
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ldap_data_dev:/var/lib/ldap
+      - ldap_config_dev:/etc/ldap
+    command: --copy-service
+    networks:
+      - lubase-network
+
+networks:
+  lubase-network:
+    driver: bridge
+
+volumes:
+  mysql_data_dev:
+  ldap_data_dev:
+  ldap_config_dev:

@@ -1,0 +1,40 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: lubase-uaa
+  datasource:
+    url: jdbc:mysql://192.168.20.164:3306/uaa?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+  ldap:
+    urls: ldap://192.168.20.164:389
+    base: dc=luban,dc=com
+    username: cn=admin,dc=luban,dc=com
+    password: admin
+  cloud:
+    config:
+      enabled: false
+
+eureka:
+  client:
+    enabled: false
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    root: INFO
+    com.luban.uaa: DEBUG
+
+jwt:
+  secret: luban-springcloud-demo-secret-key-for-jwt-token-generation-must-be-long-enough
+  expiration: 86400000

@@ -1,0 +1,41 @@
+server:
+  port: 7573
+
+spring:
+  application:
+    name: lubase-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: uaa-service
+          uri: http://lubase-uaa:9999
+          predicates:
+            - Path=/uaa/**
+        - id: product-service
+          uri: http://lubase-product:8082
+          predicates:
+            - Path=/product/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: false
+            maxAge: 3600
+
+eureka:
+  client:
+    enabled: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG

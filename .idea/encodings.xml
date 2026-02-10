@@ -4,6 +4,11 @@
     <file url="file://$PROJECT_DIR$/configure-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/discovery-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/gateway-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lubase-configure/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lubase-discovery/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lubase-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lubase-product/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/lubase-uaa/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/product-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />

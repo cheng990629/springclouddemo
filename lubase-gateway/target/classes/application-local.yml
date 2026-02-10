@@ -1,0 +1,30 @@
+server:
+  port: 7573
+
+spring:
+  application:
+    name: lubase-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: uaa-service
+          uri: http://192.168.20.164:9999
+          predicates:
+            - Path=/uaa/**
+        - id: product-service
+          uri: http://192.168.20.164:8082
+          predicates:
+            - Path=/api/product/**,/product/**
+          filters:
+            - RewritePath=/api(?<segment>/?.*), /$\{segment}
+
+eureka:
+  client:
+    enabled: false
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
