@@ -1,5 +1,12 @@
+# 多阶段构建后端服务
+FROM maven:3.9-eclipse-temurin-17 AS builder
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests -f lubase-configure/pom.xml
+
+# 运行阶段
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY lubase-configure/target/*.jar app.jar
+COPY --from=builder /app/lubase-configure/target/*.jar app.jar
 EXPOSE 8888
 ENTRYPOINT ["java", "-jar", "app.jar"]

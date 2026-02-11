@@ -8,8 +8,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: uaa
-      MYSQL_USER: luban
-      MYSQL_PASSWORD: luban
     ports:
       - "3306:3306"
     volumes:
@@ -55,11 +53,6 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     networks:
       - lubase-network
 
@@ -73,16 +66,11 @@ services:
       - "8888:8888"
     depends_on:
       discovery:
-        condition: service_healthy
+        condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=docker,native
     volumes:
       - ./lubase-configure/src/main/resources/config:/config:ro
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     networks:
       - lubase-network
 
@@ -107,11 +95,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/uaa?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9999/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     networks:
       - lubase-network
 
@@ -125,17 +108,12 @@ services:
       - "7573:7573"
     depends_on:
       discovery:
-        condition: service_healthy
+        condition: service_started
       uaa:
-        condition: service_healthy
+        condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://lubase-discovery:8761/eureka/
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7573/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     networks:
       - lubase-network
 
@@ -149,7 +127,7 @@ services:
       - "8082:8082"
     depends_on:
       discovery:
-        condition: service_healthy
+        condition: service_started
       mysql:
         condition: service_healthy
     environment:
@@ -158,11 +136,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/product?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     networks:
       - lubase-network
 
