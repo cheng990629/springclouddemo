@@ -8,55 +8,45 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
     private JwtService jwtService;
 
     @Bean
-    @Order(1)
-    public SecurityFilterChain permitAllFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/product/**", "/api/**", "/actuator/**", "/error")
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-        
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .addFilterBefore(permitAllFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
+    // 第一个过滤器：直接放行所有请求
     @Bean
-    @Order(2)
-    public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().authenticated())
-            .addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
+    public OncePerRequestFilter permitAllFilter() {
+        return new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                    throws ServletException, IOException {
+                filterChain.doFilter(request, response);
+            }
+        };
     }
 
     @Bean
@@ -75,7 +65,8 @@ public class SecurityConfig {
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
                 throws ServletException, IOException {
             String path = request.getRequestURI();
-            if (path.startsWith("/product/") || path.startsWith("/api/") || path.equals("/error")) {
+            // 对于 /product/** 和 /api/** 路径，跳过 JWT 验证
+            if (path.startsWith("/product/") || path.startsWith("/api/")) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -85,16 +76,11 @@ public class SecurityConfig {
                 String token = authHeader.substring(7);
                 try {
                     String username = jwtService.extractUsername(token);
-                    List<String> roles = jwtService.extractRoles(token);
-                    
                     if (username != null) {
-                        List<SimpleGrantedAuthority> authorities = roles.stream()
-                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                            .collect(Collectors.toList());
-                        
-                        UsernamePasswordAuthenticationToken auth = 
-                            new UsernamePasswordAuthenticationToken(username, null, authorities);
-                        SecurityContextHolder.getContext().setAuthentication(auth);
+                        org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth = 
+                            new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                                username, null, java.util.Collections.emptyList());
+                        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
                     }
                 } catch (Exception e) {
                     // Invalid token

@@ -20,11 +20,12 @@ spring:
     init:
       mode: always
       continue-on-error: true
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://192.168.20.164:9999
+  # 移除 OAuth2 资源服务器配置，使用自定义 JWT
+  # security:
+  #   oauth2:
+  #     resourceserver:
+  #       jwt:
+  #         issuer-uri: http://192.168.20.164:9999
 
 eureka:
   client:
