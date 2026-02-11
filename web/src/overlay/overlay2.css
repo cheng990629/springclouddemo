@@ -1,0 +1,125 @@
+.overlay-root {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 20px;
+  background: linear-gradient(180deg, rgba(250,245,250,0.8), rgba(250,230,235,0.95));
+  backdrop-filter: blur(6px);
+  /* prevent host layout scrollbars from appearing; inner card handles scrolling */
+  overflow: hidden;
+}
+
+.overlay-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 12px;
+  background: transparent;
+}
+
+.overlay-header .overlay-header-inner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+}
+
+.overlay-header .overlay-close-btn {
+  --btn-bg: rgba(255,255,255,0.9);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  background: var(--btn-bg);
+  color: #111827;
+  padding: 6px 12px;
+  font-weight: 600;
+}
+
+.overlay-header .overlay-close-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.overlay-container {
+  /* full-screen container under the header */
+  width: 100%;
+  max-width: none;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: transparent;
+  overflow: hidden;
+  padding: 12px;
+}
+
+/* Ensure Ant Layout Content inside overlay does not scroll the page */
+.overlay-root .ant-layout-content {
+  overflow: hidden !important;
+  height: 100%;
+}
+
+.overlay-inner {
+  width: 100%;
+  margin: 12px auto;
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  overflow: hidden;
+  /* limit inner height so the content scrolls inside the card instead of expanding the overlay */
+  max-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+}
+
+.overlay-search {
+  padding: 12px 16px;
+}
+
+.hero-card .hero-placeholder,
+.hero-card.large .hero-placeholder {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg,#f6e7ff,#ffdfe6);
+  border-radius: 8px;
+  color: #6b21a8;
+  font-weight: 700;
+}
+
+.hero-card.large .hero-placeholder {
+  height: 220px;
+}
+
+.source-card {
+  border-radius: 12px;
+  background: #fff;
+}
+
+.sources-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.source-tag {
+  background: rgba(235,232,255,0.6);
+  border-radius: 18px;
+  padding: 6px 10px;
+  color: #5b21b6;
+}
+
+.overlay-bottom-fab {
+  /* removed */
+  display: none;
+}
+
+

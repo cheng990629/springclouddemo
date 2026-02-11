@@ -1,0 +1,57 @@
+/* Ant Design v6 uses CSS-in-JS by default, no need to import reset.css */
+/* @import 'antd/dist/reset.css'; */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --primary-color: #1890ff;
+  --text-color: #333;
+  --bg-color: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* 确保Layout组件正常显示 */
+/* Keep layout defaults and avoid aggressive global overrides that break layout */
+.ant-layout {
+  min-height: 100vh;
+}
+
+.ant-layout-sider {
+  transition: all 0.2s ease !important;
+}
+
+/* Let content manage its own scroll; avoid forcing overflow:hidden globally */
+.ant-layout-content {
+  transition: all 0.2s ease;
+}
+
+.ant-layout-footer {
+  background: #fff !important;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* 确保响应式布局 */
+@media (max-width: 768px) {
+  .ant-layout-has-sider .ant-layout-sider {
+    position: absolute !important;
+    z-index: 1000;
+  }
+}

@@ -1,0 +1,155 @@
+.knowledge-page {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+}
+.knowledge-sidebar {
+  width: 220px;
+  border-right: 1px solid rgba(0,0,0,0.04);
+  padding: 20px 12px;
+  box-sizing: border-box;
+}
+.kb-left-title {
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.kb-folder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.kb-folder-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: #666;
+}
+.kb-folder-item.active {
+  background: rgba(24,144,255,0.08);
+  color: #1890ff;
+  font-weight: 600;
+}
+.knowledge-main {
+  flex: 1;
+  padding: 18px 24px;
+  position: relative;
+  min-width: 0;
+}
+.kb-cards-row {
+  padding-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+}
+.kb-card-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.kb-card-checkbox {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.kb-card-wrapper:hover .kb-card-checkbox,
+.kb-cards-row.has-selection .kb-card-checkbox {
+  opacity: 1;
+}
+
+/* 文件预览相关样式 */
+.kb-card {
+  transition: all 0.2s ease;
+}
+.kb-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+.kb-card {
+  border-radius: 8px;
+  overflow: hidden;
+  width: 140px;
+  height: 180px;
+  background: #ffffff;
+  border: 2px solid #d9d9d9;
+  padding: 0px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 强制覆盖 Ant Design 卡片body的默认内边距 */
+.kb-card :where(.ant-card-body) {
+  padding: 0 !important;
+}
+
+.kb-card-thumb {
+  height: 90px;
+  background: linear-gradient(90deg,#f6e7ff,#ffdfe6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kb-card-thumb-folder {
+  background: #f0f8ff !important;
+}
+.kb-card-meta {
+  padding: 8px 10px;
+  position: relative;
+  height: 90px;
+}
+.kb-card-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.kb-card-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  right: 10px;
+}
+.kb-card-date {
+  color: #999;
+  font-size: 11px;
+}
+.kb-empty-area {
+  height: calc(100% - 220px);
+}
+.kb-search-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 28px;
+  z-index: 10000;
+}
+
+/* Dark theme overrides for Knowledge page */
+[data-theme="dark"] .knowledge-page {
+  background: #071019;
+  color: #e6eef6;
+}
+[data-theme="dark"] .knowledge-sidebar {
+  background: rgba(18,18,20,0.6);
+  border-right: 1px solid rgba(255,255,255,0.04);
+}
+[data-theme="dark"] .kb-left-title,
+[data-theme="dark"] .kb-folder-item {
+  color: #dbe7ff;
+}
+[data-theme="dark"] .kb-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+[data-theme="dark"] .kb-card-title {
+  color: #e6eef6;
+}
+[data-theme="dark"] .kb-card-info,
+[data-theme="dark"] .kb-card-date {
+  color: #9fb3d6;
+}
+
