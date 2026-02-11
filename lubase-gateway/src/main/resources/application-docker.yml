@@ -14,7 +14,9 @@ spring:
         - id: product-service
           uri: http://lubase-product:8082
           predicates:
-            - Path=/product/**
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api(?<segment>/?.*), /$\{segment}
       globalcors:
         cors-configurations:
           '[/**]':
@@ -28,7 +30,7 @@ spring:
               - OPTIONS
             allowedHeaders:
               - "*"
-            allowCredentials: false
+            allowCredentials: true
             maxAge: 3600
 
 eureka:

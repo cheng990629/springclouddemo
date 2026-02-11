@@ -15,16 +15,14 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // 浏览产品列表 - 需要角色 USER
+    // 浏览产品列表 - 允许匿名访问
     @GetMapping("/list")
-    @PreAuthorize("hasAnyRole('USER', 'EDITOR', 'PRODUCT_ADMIN')")
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    // 获取单个产品 - 需要角色 USER
+    // 获取单个产品 - 允许匿名访问
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'EDITOR', 'PRODUCT_ADMIN')")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         ProductDTO product = productService.getProductById(id);
         if (product != null) {
